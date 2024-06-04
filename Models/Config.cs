@@ -1,7 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Xml.Serialization;
 
 namespace dba.Models
 {
+    [Table("Config", Schema="dba")]
     public partial class Config
     {
         [Key]

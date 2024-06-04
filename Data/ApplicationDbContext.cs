@@ -1,4 +1,4 @@
-using dba.Models;
+using DBA.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,7 +10,11 @@ namespace dba.Data
             : base(options)
         {
         }
+        public DbSet<Device>? Devices { get; set; }
+        public DbSet<Disk>? Disks { get; set; }
+        public DbSet<Instance>? Instances { get; set; }
         public DbSet<Config>? Config { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
