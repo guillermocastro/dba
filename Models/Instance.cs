@@ -82,7 +82,7 @@ namespace DBA.Models
         public int? VirtualProcessors { get; set; }
         [StringLength(128)]
         public string? Use { get; set; }
-        public byte[] ConnectionString { get; set; }
+        public byte[]? ConnectionString { get; set; }
         public DateTime? DataImportUtc { get; set; }
 
         public virtual Device Device { get; set;}
