@@ -4,7 +4,7 @@ using System.Xml.Serialization;
 
 namespace dba.Models
 {
-    [Table("Config", Schema = "dba")]
+    [Table("Config", Schema="dba")]
     public partial class Config
     {
         [Key]
