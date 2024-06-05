@@ -1,7 +1,29 @@
 ﻿@page "/"
-
+@using dba.Models;
+@using dba.Services;
+@inject IDbaService DbaService;
 <PageTitle>Home</PageTitle>
 
 <h1>Hello, world!</h1>
 
-Welcome to your new app.
+@if (devices == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    foreach(var device in devices)
+    {
+        <p>@device.DeviceId</p>
+    }
+}
+
+@code
+{
+    IEnumerable<Device>? devices;
+
+    protected override async Task OnInitializedAsync()
+    {
+        devices = await DbaService.GetDevicesAsync();
+    }
+}

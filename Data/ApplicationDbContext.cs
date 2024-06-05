@@ -14,6 +14,14 @@ namespace dba.Data
         public DbSet<Disk>? Disks { get; set; }
         public DbSet<Instance>? Instances { get; set; }
         public DbSet<Config>? Config { get; set; }
+        public DbSet<Db>? Db { get; set; }
+        public DbSet<DbBackup>? DbBackup { get; set; }
+        public DbSet<DbFile>? DbFile { get; set; }
+        public DbSet<DbTable>? DbTable { get; set; }
+        public DbSet<Restore>? Restore { get; set; }
+        public DbSet<SqlPatch>? SqlPatch { get; set; }
+        public DbSet<SqlServer>? SqlServer { get; set; }
+        
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

@@ -12,7 +12,7 @@ using dba.Data;
 namespace dba.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240603141350_m01")]
+    [Migration("20240605082453_m01")]
     partial class m01
     {
         /// <inheritdoc />
@@ -261,7 +261,7 @@ namespace dba.Migrations
 
                     b.HasKey("VersionId");
 
-                    b.ToTable("Config");
+                    b.ToTable("Config", "dba");
 
                     b.HasData(
                         new
@@ -274,6 +274,212 @@ namespace dba.Migrations
                             Yearly4Backup = "\\\\vamwin\\shares\\SQL Server Backups - Annual - 4year",
                             Yearly7Backup = "\\\\vamwin\\shares\\SQL Server Backups - Annual - 7 year"
                         });
+                });
+
+            modelBuilder.Entity("dba.Models.Device", b =>
+                {
+                    b.Property<string>("DeviceId")
+                        .HasMaxLength(24)
+                        .HasColumnType("nvarchar(24)");
+
+                    b.Property<int?>("Cores")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Cpu")
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)")
+                        .HasColumnName("CPU");
+
+                    b.Property<DateTime?>("DataImportUtc")
+                        .HasColumnType("datetime")
+                        .HasColumnName("DataImportUTC");
+
+                    b.Property<string>("Ram")
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)")
+                        .HasColumnName("RAM");
+
+                    b.HasKey("DeviceId");
+
+                    b.ToTable("Device", "dba");
+                });
+
+            modelBuilder.Entity("dba.Models.Disk", b =>
+                {
+                    b.Property<int>("DiskId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DiskId"));
+
+                    b.Property<DateTime?>("DataImportUtc")
+                        .HasColumnType("datetime")
+                        .HasColumnName("DataImportUTC");
+
+                    b.Property<string>("DeviceId")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<string>("Drive")
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<string>("DriveType")
+                        .HasMaxLength(18)
+                        .HasColumnType("nvarchar(18)");
+
+                    b.Property<decimal?>("FreeSpace")
+                        .HasColumnType("decimal(38, 2)");
+
+                    b.Property<decimal?>("FreeSpace1")
+                        .HasColumnType("decimal(38, 2)")
+                        .HasColumnName("FreeSpace%");
+
+                    b.Property<decimal?>("MinSpace")
+                        .HasColumnType("decimal(38, 2)");
+
+                    b.Property<decimal?>("Size")
+                        .HasColumnType("decimal(38, 2)");
+
+                    b.Property<decimal?>("ThresholdSpace")
+                        .HasColumnType("decimal(38, 2)");
+
+                    b.Property<decimal?>("UsedSpace")
+                        .HasColumnType("decimal(38, 2)");
+
+                    b.Property<string>("VolumeName")
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.HasKey("DiskId");
+
+                    b.ToTable("Disk", "dba");
+                });
+
+            modelBuilder.Entity("dba.Models.Instance", b =>
+                {
+                    b.Property<string>("InstanceId")
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<string>("AgentAccount")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("BackupDirectory")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("Collation")
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<string>("Comments")
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<byte[]>("ConnectionString")
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<DateTime?>("DataImportUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DbeAccount")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("DeviceId")
+                        .IsRequired()
+                        .HasMaxLength(24)
+                        .HasColumnType("nvarchar(24)");
+
+                    b.Property<string>("Edition")
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<string>("Environment")
+                        .HasMaxLength(12)
+                        .HasColumnType("nvarchar(12)");
+
+                    b.Property<string>("Hostname")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("InstanceDefaultDataPath")
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<string>("InstanceDefaultLogPath")
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<string>("IsSingleUser")
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<string>("Level")
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<string>("LicenseKey")
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<string>("Listener")
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<string>("Owner")
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<string>("Port")
+                        .HasMaxLength(5)
+                        .HasColumnType("nvarchar(5)");
+
+                    b.Property<string>("ProductUpdateLevel")
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<string>("ProductUpdateReference")
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<string>("ProductVersion")
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<bool?>("RemoteBackup")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("ResourceLastUpdateDateTime")
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<string>("ServerState")
+                        .HasMaxLength(6)
+                        .HasColumnType("nvarchar(6)");
+
+                    b.Property<string>("Use")
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<string>("Version")
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<int?>("VirtualProcessors")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("cpu_count")
+                        .HasColumnType("int");
+
+                    b.HasKey("InstanceId");
+
+                    b.HasIndex("DeviceId");
+
+                    b.ToTable("Instance", "dba");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -325,6 +531,17 @@ namespace dba.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("dba.Models.Instance", b =>
+                {
+                    b.HasOne("dba.Models.Device", "Device")
+                        .WithMany()
+                        .HasForeignKey("DeviceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Device");
                 });
 #pragma warning restore 612, 618
         }

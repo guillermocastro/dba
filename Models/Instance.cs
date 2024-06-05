@@ -6,24 +6,24 @@ namespace dba.Models
     [Table("Instance", Schema = "dba")]
     public partial class Instance
     {
-        //public Instance()
-        //{
+        public Instance()
+        {
+            DeviceId = "";
+            Dbs = new HashSet<Db>();
+            DbFiles = new HashSet<DbFile>();
+            DbBackups = new HashSet<DbBackup>();
+            Restores = new HashSet<Restore>();
+            DbTables = new HashSet<DbTable>();
+            //TableUsages = new HashSet<TableUsage>();
             //Configurations = new HashSet<Configuration>();
-            //Dbbackups = new HashSet<Dbbackup>();
-            //Dbfiles = new HashSet<Dbfile>();
             //Dbjobs = new HashSet<Dbjob>();
-            //Dbrestores = new HashSet<Dbrestore>();
-            //Dbs = new HashSet<Db>();
-            //Dbtables = new HashSet<Dbtable>();
             //DuplicatedIndices = new HashSet<DuplicatedIndex>();
             //InstanceCounters = new HashSet<InstanceCounter>();
             //MissingIndices = new HashSet<MissingIndex>();
-            //PerfMon1s = new HashSet<PerfMon1>();
-            //Restores = new HashSet<Restore>();
-            //TableUsage1s = new HashSet<TableUsage1>();
+            //PerfMons = new HashSet<PerfMon>();
             //TmpDbbackups = new HashSet<TmpDbbackup>();
             //UnusedIndices = new HashSet<UnusedIndex>();
-        //}
+        }
 
         [Key]
         [StringLength(128)]
@@ -83,39 +83,26 @@ namespace dba.Models
         [StringLength(128)]
         public string? Use { get; set; }
         public byte[]? ConnectionString { get; set; }
+        [StringLength(260)]
+        public string? Certificate { get; set; }
         public DateTime? DataImportUtc { get; set; }
 
         public virtual Device Device { get; set;}
+        public virtual ICollection<Db> Dbs { get; set; }
+        public virtual ICollection<DbFile> DbFiles { get; set; }
+        public virtual ICollection<DbBackup> DbBackups { get; set; }
+        public virtual ICollection<Restore> Restores { get; set; }
+        public virtual ICollection<DbTable> DbTables { get; set; }
 
-        //[InverseProperty(nameof(Configuration.Instance))]
+        //public virtual ICollection<TableUsage> TableUsages { get; set; }
         //public virtual ICollection<Configuration> Configurations { get; set; }
-        //[InverseProperty(nameof(Dbbackup.Instance))]
-        //public virtual ICollection<Dbbackup> Dbbackups { get; set; }
-        //[InverseProperty(nameof(Dbfile.Instance))]
-        //public virtual ICollection<Dbfile> Dbfiles { get; set; }
-        //[InverseProperty(nameof(Dbjob.Instance))]
         //public virtual ICollection<Dbjob> Dbjobs { get; set; }
-        //[InverseProperty(nameof(Dbrestore.Instance))]
-        //public virtual ICollection<Dbrestore> Dbrestores { get; set; }
-        //[InverseProperty(nameof(Db.Instance))]
-        //public virtual ICollection<Db> Dbs { get; set; }
-        //[InverseProperty(nameof(Dbtable.Instance))]
-        //public virtual ICollection<Dbtable> Dbtables { get; set; }
-        //[InverseProperty(nameof(DuplicatedIndex.Instance))]
         //public virtual ICollection<DuplicatedIndex> DuplicatedIndices { get; set; }
-        //[InverseProperty(nameof(InstanceCounter.Instance))]
         //public virtual ICollection<InstanceCounter> InstanceCounters { get; set; }
-        //[InverseProperty(nameof(MissingIndex.Instance))]
         //public virtual ICollection<MissingIndex> MissingIndices { get; set; }
-        //[InverseProperty(nameof(PerfMon1.Instance))]
         //public virtual ICollection<PerfMon1> PerfMon1s { get; set; }
-        //[InverseProperty(nameof(Restore.Instance))]
         //public virtual ICollection<Restore> Restores { get; set; }
-        //[InverseProperty(nameof(TableUsage1.Instance))]
-        //public virtual ICollection<TableUsage1> TableUsage1s { get; set; }
-        //[InverseProperty(nameof(TmpDbbackup.Instance))]
         //public virtual ICollection<TmpDbbackup> TmpDbbackups { get; set; }
-        //[InverseProperty(nameof(UnusedIndex.Instance))]
         //public virtual ICollection<UnusedIndex> UnusedIndices { get; set; }
     }
 }
