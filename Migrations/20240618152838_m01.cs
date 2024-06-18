@@ -77,7 +77,7 @@ namespace dba.Migrations
                 columns: table => new
                 {
                     DeviceId = table.Column<string>(type: "nvarchar(24)", maxLength: 24, nullable: false),
-                    RAM = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: true),
+                    Ram = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: true),
                     CPU = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true),
                     Cores = table.Column<int>(type: "int", nullable: true),
                     DataImportUTC = table.Column<DateTime>(type: "datetime", nullable: true)
@@ -88,27 +88,16 @@ namespace dba.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Disk",
+                name: "SqlServer",
                 schema: "dba",
                 columns: table => new
                 {
-                    DiskId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    DeviceId = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
-                    Drive = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: true),
-                    DriveType = table.Column<string>(type: "nvarchar(18)", maxLength: 18, nullable: true),
-                    MinSpace = table.Column<decimal>(type: "decimal(38,2)", nullable: true),
-                    FreeSpace = table.Column<decimal>(type: "decimal(38,2)", nullable: true),
-                    ThresholdSpace = table.Column<decimal>(type: "decimal(38,2)", nullable: true),
-                    UsedSpace = table.Column<decimal>(type: "decimal(38,2)", nullable: true),
-                    Size = table.Column<decimal>(type: "decimal(38,2)", nullable: true),
-                    FreeSpace0 = table.Column<decimal>(name: "FreeSpace%", type: "decimal(38,2)", nullable: true),
-                    VolumeName = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true),
-                    DataImportUTC = table.Column<DateTime>(type: "datetime", nullable: true)
+                    SqlServerId = table.Column<string>(type: "nvarchar(4)", maxLength: 4, nullable: false),
+                    SqlServerVersion = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Disk", x => x.DiskId);
+                    table.PrimaryKey("PK_SqlServer", x => x.SqlServerId);
                 });
 
             migrationBuilder.CreateTable(
@@ -218,6 +207,34 @@ namespace dba.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Disk",
+                schema: "dba",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    DeviceId = table.Column<string>(type: "nvarchar(24)", maxLength: 24, nullable: false),
+                    Drive = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: true),
+                    DriveType = table.Column<string>(type: "nvarchar(18)", maxLength: 18, nullable: true),
+                    FreeSpace = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: true),
+                    UsedSpace = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: true),
+                    Size = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: true),
+                    VolumeName = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true),
+                    DataImportUTC = table.Column<DateTime>(type: "datetime", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Disk", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Disk_Device_DeviceId",
+                        column: x => x.DeviceId,
+                        principalSchema: "dba",
+                        principalTable: "Device",
+                        principalColumn: "DeviceId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Instance",
                 schema: "dba",
                 columns: table => new
@@ -250,6 +267,9 @@ namespace dba.Migrations
                     cpu_count = table.Column<int>(type: "int", nullable: true),
                     VirtualProcessors = table.Column<int>(type: "int", nullable: true),
                     Use = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true),
+                    CertificateName = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true),
+                    CertificatePassword = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
+                    CertificateExpiryDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ConnectionString = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
                     DataImportUtc = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
@@ -262,6 +282,192 @@ namespace dba.Migrations
                         principalSchema: "dba",
                         principalTable: "Device",
                         principalColumn: "DeviceId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SqlPatch",
+                schema: "dba",
+                columns: table => new
+                {
+                    SqlpatchId = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: false),
+                    SQLServerId = table.Column<string>(type: "nvarchar(4)", maxLength: 4, nullable: false),
+                    CUN = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: false),
+                    SQLPatchDate = table.Column<DateTime>(type: "datetime", nullable: true),
+                    CE = table.Column<string>(type: "varchar(13)", unicode: false, maxLength: 13, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SqlPatch", x => x.SqlpatchId);
+                    table.ForeignKey(
+                        name: "FK_SqlPatch_SqlServer_SQLServerId",
+                        column: x => x.SQLServerId,
+                        principalSchema: "dba",
+                        principalTable: "SqlServer",
+                        principalColumn: "SqlServerId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DB",
+                schema: "dba",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    InstanceId = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    DBName = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    IsUserDB = table.Column<bool>(type: "bit", nullable: true),
+                    DBState = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
+                    DBUserAccess = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
+                    DBRecovery = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
+                    DBCollation = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true),
+                    DBCompatibility = table.Column<int>(type: "int", nullable: true),
+                    DBCreation = table.Column<DateTime>(type: "datetime", nullable: true),
+                    DBUse = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: true),
+                    PersonalData = table.Column<bool>(type: "bit", nullable: true),
+                    IsReplica = table.Column<bool>(type: "bit", nullable: true),
+                    LastDBCheck = table.Column<DateTime>(type: "datetime", nullable: true),
+                    LastReIndex = table.Column<DateTime>(type: "datetime", nullable: true),
+                    LastShrink = table.Column<DateTime>(type: "datetime", nullable: true),
+                    DataImportUTC = table.Column<DateTime>(type: "datetime", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DB", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_DB_Instance_InstanceId",
+                        column: x => x.InstanceId,
+                        principalSchema: "dba",
+                        principalTable: "Instance",
+                        principalColumn: "InstanceId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DbBackup",
+                schema: "dba",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    InstanceId = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    DbName = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true),
+                    BackupStart = table.Column<DateTime>(type: "datetime", nullable: true),
+                    BackupEnd = table.Column<DateTime>(type: "datetime", nullable: true),
+                    TimeTaken = table.Column<string>(type: "nvarchar(15)", maxLength: 15, nullable: true),
+                    ExpiryDate = table.Column<DateTime>(type: "datetime", nullable: true),
+                    BackupType = table.Column<string>(type: "varchar(11)", unicode: false, maxLength: 11, nullable: true),
+                    IsPasswordProtected = table.Column<bool>(type: "bit", nullable: true),
+                    IsCompressed = table.Column<bool>(type: "bit", nullable: true),
+                    IsEncrypted = table.Column<bool>(type: "bit", nullable: false),
+                    CompressedSizeKb = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: true),
+                    BackupSizeKb = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: true),
+                    BackupFile = table.Column<string>(type: "nvarchar(260)", maxLength: 260, nullable: true),
+                    DeviceType = table.Column<string>(type: "varchar(13)", unicode: false, maxLength: 13, nullable: true),
+                    FirstLsn = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: true),
+                    LastLsn = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: true),
+                    CheckpointLsn = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: true),
+                    DataImportUTC = table.Column<DateTime>(type: "datetime", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DbBackup", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_DbBackup_Instance_InstanceId",
+                        column: x => x.InstanceId,
+                        principalSchema: "dba",
+                        principalTable: "Instance",
+                        principalColumn: "InstanceId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DbFile",
+                schema: "dba",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    InstanceId = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    DbName = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    FileName = table.Column<string>(type: "varchar(128)", unicode: false, maxLength: 128, nullable: false),
+                    FileType = table.Column<string>(type: "varchar(20)", unicode: false, maxLength: 20, nullable: true),
+                    PhysicalDisk = table.Column<string>(type: "varchar(256)", unicode: false, maxLength: 256, nullable: true),
+                    MaxSizeMb = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: true),
+                    Growth = table.Column<string>(type: "varchar(32)", unicode: false, maxLength: 32, nullable: true),
+                    FileSizeMb = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: true),
+                    FreeSpaceMb = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: true),
+                    FreeSpace = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: true),
+                    DataImportUTC = table.Column<DateTime>(type: "datetime", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DbFile", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_DbFile_Instance_InstanceId",
+                        column: x => x.InstanceId,
+                        principalSchema: "dba",
+                        principalTable: "Instance",
+                        principalColumn: "InstanceId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DbTable",
+                schema: "dba",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    InstanceId = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    DbName = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    TableName = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true),
+                    Rows = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: true),
+                    Reserved = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: true),
+                    Data = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: true),
+                    IndexSize = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: true),
+                    Unused = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: true),
+                    DataImportUTC = table.Column<DateTime>(type: "datetime", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DbTable", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_DbTable_Instance_InstanceId",
+                        column: x => x.InstanceId,
+                        principalSchema: "dba",
+                        principalTable: "Instance",
+                        principalColumn: "InstanceId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Restore",
+                schema: "dba",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    RestoreId = table.Column<int>(type: "int", nullable: false),
+                    InstanceId = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    RestoreDate = table.Column<DateTime>(type: "datetime", nullable: true),
+                    DbName = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true),
+                    UserName = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true),
+                    BackupSetId = table.Column<int>(type: "int", nullable: true),
+                    RestoreTypeId = table.Column<string>(type: "nvarchar(1)", maxLength: 1, nullable: true),
+                    Replace = table.Column<bool>(type: "bit", nullable: true),
+                    Recovery = table.Column<bool>(type: "bit", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Restore", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Restore_Instance_InstanceId",
+                        column: x => x.InstanceId,
+                        principalSchema: "dba",
+                        principalTable: "Instance",
+                        principalColumn: "InstanceId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -311,10 +517,52 @@ namespace dba.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_DB_InstanceId",
+                schema: "dba",
+                table: "DB",
+                column: "InstanceId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DbBackup_InstanceId",
+                schema: "dba",
+                table: "DbBackup",
+                column: "InstanceId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DbFile_InstanceId",
+                schema: "dba",
+                table: "DbFile",
+                column: "InstanceId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DbTable_InstanceId",
+                schema: "dba",
+                table: "DbTable",
+                column: "InstanceId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Disk_DeviceId",
+                schema: "dba",
+                table: "Disk",
+                column: "DeviceId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Instance_DeviceId",
                 schema: "dba",
                 table: "Instance",
                 column: "DeviceId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Restore_InstanceId",
+                schema: "dba",
+                table: "Restore",
+                column: "InstanceId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SqlPatch_SQLServerId",
+                schema: "dba",
+                table: "SqlPatch",
+                column: "SQLServerId");
         }
 
         /// <inheritdoc />
@@ -340,11 +588,31 @@ namespace dba.Migrations
                 schema: "dba");
 
             migrationBuilder.DropTable(
+                name: "DB",
+                schema: "dba");
+
+            migrationBuilder.DropTable(
+                name: "DbBackup",
+                schema: "dba");
+
+            migrationBuilder.DropTable(
+                name: "DbFile",
+                schema: "dba");
+
+            migrationBuilder.DropTable(
+                name: "DbTable",
+                schema: "dba");
+
+            migrationBuilder.DropTable(
                 name: "Disk",
                 schema: "dba");
 
             migrationBuilder.DropTable(
-                name: "Instance",
+                name: "Restore",
+                schema: "dba");
+
+            migrationBuilder.DropTable(
+                name: "SqlPatch",
                 schema: "dba");
 
             migrationBuilder.DropTable(
@@ -352,6 +620,14 @@ namespace dba.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Instance",
+                schema: "dba");
+
+            migrationBuilder.DropTable(
+                name: "SqlServer",
+                schema: "dba");
 
             migrationBuilder.DropTable(
                 name: "Device",

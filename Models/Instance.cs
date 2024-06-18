@@ -82,9 +82,11 @@ namespace dba.Models
         public int? VirtualProcessors { get; set; }
         [StringLength(128)]
         public string? Use { get; set; }
+        [StringLength(128)]
+        public string? CertificateName { get; set; }
+        public byte[]? CertificatePassword { get; set; }
+        public DateTime? CertificateExpiryDate { get; set; }
         public byte[]? ConnectionString { get; set; }
-        [StringLength(260)]
-        public string? Certificate { get; set; }
         public DateTime? DataImportUtc { get; set; }
 
         public virtual Device Device { get; set;}

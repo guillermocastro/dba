@@ -43,11 +43,11 @@ namespace dba.Models
         [Unicode(false)]
         public string? DeviceType { get; set; }
         [StringLength(25)]
-        public decimal? FirstLsn { get; set; }
+        public string? FirstLsn { get; set; }
         [StringLength(25)]
-        public decimal? LastLsn { get; set; }
+        public string? LastLsn { get; set; }
         [StringLength(25)]
-        public decimal? CheckpointLsn { get; set; }
+        public string? CheckpointLsn { get; set; }
         [Column("DataImportUTC", TypeName = "datetime")]
         public DateTime? DataImportUtc { get; set; }
 

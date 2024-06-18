@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.EntityFrameworkCore;
 
 namespace dba.Models
 {
@@ -11,13 +8,13 @@ namespace dba.Models
     {
         public Device()
         {
-            //Instances = new HashSet<Instance>();
+            Instances = new HashSet<Instance>();
+            Disks = new HashSet<Disk>();
         }
 
         [Key]
         [StringLength(24)]
         public string DeviceId { get; set; } = null!;
-        [Column("RAM")]
         [StringLength(64)]
         public string? Ram { get; set; }
         [Column("CPU")]
@@ -27,7 +24,7 @@ namespace dba.Models
         [Column("DataImportUTC", TypeName = "datetime")]
         public DateTime? DataImportUtc { get; set; }
 
-        //[InverseProperty(nameof(Instance.Device))]
-        //public virtual ICollection<Instance> Instances { get; set; }
+        public virtual ICollection<Instance> Instances { get; set; }
+        public virtual ICollection<Disk> Disks { get; set; }
     }
 }

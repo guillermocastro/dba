@@ -383,9 +383,9 @@ namespace dba.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(11)");
 
-                    b.Property<decimal?>("CheckpointLsn")
+                    b.Property<string>("CheckpointLsn")
                         .HasMaxLength(25)
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("nvarchar(25)");
 
                     b.Property<decimal?>("CompressedSizeKb")
                         .HasPrecision(18, 2)
@@ -407,9 +407,9 @@ namespace dba.Migrations
                     b.Property<DateTime?>("ExpiryDate")
                         .HasColumnType("datetime");
 
-                    b.Property<decimal?>("FirstLsn")
+                    b.Property<string>("FirstLsn")
                         .HasMaxLength(25)
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("nvarchar(25)");
 
                     b.Property<string>("InstanceId")
                         .IsRequired()
@@ -425,9 +425,9 @@ namespace dba.Migrations
                     b.Property<bool?>("IsPasswordProtected")
                         .HasColumnType("bit");
 
-                    b.Property<decimal?>("LastLsn")
+                    b.Property<string>("LastLsn")
                         .HasMaxLength(25)
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("nvarchar(25)");
 
                     b.Property<string>("TimeTaken")
                         .HasMaxLength(15)
@@ -579,8 +579,7 @@ namespace dba.Migrations
 
                     b.Property<string>("Ram")
                         .HasMaxLength(64)
-                        .HasColumnType("nvarchar(64)")
-                        .HasColumnName("RAM");
+                        .HasColumnType("nvarchar(64)");
 
                     b.HasKey("DeviceId");
 
@@ -649,9 +648,15 @@ namespace dba.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
-                    b.Property<string>("Certificate")
-                        .HasMaxLength(260)
-                        .HasColumnType("nvarchar(260)");
+                    b.Property<DateTime?>("CertificateExpiryDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CertificateName")
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<byte[]>("CertificatePassword")
+                        .HasColumnType("varbinary(max)");
 
                     b.Property<string>("Collation")
                         .HasMaxLength(128)
@@ -961,7 +966,7 @@ namespace dba.Migrations
             modelBuilder.Entity("dba.Models.Disk", b =>
                 {
                     b.HasOne("dba.Models.Device", "Device")
-                        .WithMany()
+                        .WithMany("Disks")
                         .HasForeignKey("DeviceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -972,7 +977,7 @@ namespace dba.Migrations
             modelBuilder.Entity("dba.Models.Instance", b =>
                 {
                     b.HasOne("dba.Models.Device", "Device")
-                        .WithMany()
+                        .WithMany("Instances")
                         .HasForeignKey("DeviceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -998,6 +1003,13 @@ namespace dba.Migrations
                         .HasForeignKey("SqlserverId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("dba.Models.Device", b =>
+                {
+                    b.Navigation("Disks");
+
+                    b.Navigation("Instances");
                 });
 
             modelBuilder.Entity("dba.Models.Instance", b =>

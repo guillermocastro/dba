@@ -24,7 +24,26 @@ namespace dba.Services
         }
         public async Task<string> UpdateDeviceAsync(Device device)
         {
-            return "ojo";
+            using (var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
+            {
+                const string sqlquery = @"UPDATE [dba].[Device] SET [Ram]=@Ram, [Cpu]=@Cpu, [Cores]=@Cores, [DataImportUtc]=GETUTCDATE() WHERE DeviceId=@DeviceId";
+                if (conn.State == ConnectionState.Closed)
+                    conn.Open();
+                try
+                {
+                    await conn.ExecuteAsync(sqlquery, new { device.DeviceId, device.Ram, device.Cpu, device.Cores, device.DataImportUtc }, commandType: CommandType.Text);
+                }
+                catch (Exception ex)
+                {
+                    return ex.Message;
+                }
+                finally
+                {
+                    if (conn.State == ConnectionState.Open)
+                        conn.Close();
+                }
+            }
+            return "Row updated";
         }
         public async Task<string> DeleteDeviceAsync(Device device)
         {
@@ -51,9 +70,28 @@ namespace dba.Services
             }
             return "Row deleted";
         }
-        public async Task<string> CreateDeviceAsync(Device devicey)
+        public async Task<string> CreateDeviceAsync(Device device)
         {
-            return "ojo";
-        }
+            using (var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
+            {
+                const string sqlquery = @"INSERT INTO [dba].[Device] ([DeviceId],[Ram],[Cpu],[Cores],[DataimportUtc]) VALUES (Ram, @Cpu, @Cores, GETUTCDATE())";
+                if (conn.State == ConnectionState.Closed)
+                    conn.Open();
+                try
+                {
+                    await conn.ExecuteAsync(sqlquery, new { device.DeviceId, device.Ram, device.Cpu, device.Cores, device.DataImportUtc }, commandType: CommandType.Text);
+                }
+                catch (Exception ex)
+                {
+                    return ex.Message;
+                }
+                finally
+                {
+                    if (conn.State == ConnectionState.Open)
+                        conn.Close();
+                }
+            }
+                return "Row Inserted";   
+       }
     }
 }
