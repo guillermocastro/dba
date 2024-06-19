@@ -14,6 +14,7 @@ namespace dba.Models
             DbBackups = new HashSet<DbBackup>();
             Restores = new HashSet<Restore>();
             DbTables = new HashSet<DbTable>();
+            //DbJobs = new HashSet<DbJob>();
             //TableUsages = new HashSet<TableUsage>();
             //Configurations = new HashSet<Configuration>();
             //Dbjobs = new HashSet<Dbjob>();
@@ -61,11 +62,14 @@ namespace dba.Models
         public string? BackupDirectory { get; set; }
         [StringLength(6)]
         public string? ServerState { get; set; }
+        [StringLength(20)]
+        public string? AdminState { get; set; }   //Add Commisioning, Decomission, Active, Rebuilding
         [StringLength(128)]
         public string? IsSingleUser { get; set; }
         [StringLength(128)]
         public string? Collation { get; set; }
         public bool? RemoteBackup { get; set; }
+        public bool? EncryptedBackup { get; set; }
         [StringLength(12)]
         public string? Environment { get; set; }
         //[StringLength(1024)]
@@ -89,16 +93,17 @@ namespace dba.Models
         public byte[]? ConnectionString { get; set; }
         public DateTime? DataImportUtc { get; set; }
 
+
         public virtual Device Device { get; set;}
         public virtual ICollection<Db> Dbs { get; set; }
         public virtual ICollection<DbFile> DbFiles { get; set; }
         public virtual ICollection<DbBackup> DbBackups { get; set; }
         public virtual ICollection<Restore> Restores { get; set; }
         public virtual ICollection<DbTable> DbTables { get; set; }
+        //public virtual ICollection<Dbjob> Dbjobs { get; set; }
 
         //public virtual ICollection<TableUsage> TableUsages { get; set; }
         //public virtual ICollection<Configuration> Configurations { get; set; }
-        //public virtual ICollection<Dbjob> Dbjobs { get; set; }
         //public virtual ICollection<DuplicatedIndex> DuplicatedIndices { get; set; }
         //public virtual ICollection<InstanceCounter> InstanceCounters { get; set; }
         //public virtual ICollection<MissingIndex> MissingIndices { get; set; }

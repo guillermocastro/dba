@@ -9,6 +9,8 @@ namespace dba.Models
         [Key]
         [StringLength(20)]
         public string VersionId { get; set; } = null!;
+        [StringLength(64)]
+        public string LicenseKey { get; set; } = null!;
         [StringLength(256)]
         public string DailyBackup { get; set; } = null!;
         [StringLength(256)]
