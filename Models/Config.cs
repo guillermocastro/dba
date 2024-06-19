@@ -10,7 +10,7 @@ namespace dba.Models
         [StringLength(20)]
         public string VersionId { get; set; } = null!;
         [StringLength(64)]
-        public string LicenseKey { get; set; } = null!;
+        public string? License { get; set; }=null;
         [StringLength(256)]
         public string DailyBackup { get; set; } = null!;
         [StringLength(256)]
