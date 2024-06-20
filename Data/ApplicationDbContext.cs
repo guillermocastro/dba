@@ -21,7 +21,11 @@ namespace dba.Data
         public DbSet<Restore>? Restore { get; set; }
         public DbSet<SqlPatch>? SqlPatch { get; set; }
         public DbSet<SqlServer>? SqlServer { get; set; }
-        
+        public DbSet<BackupFile> BackupFile  { get; set; }
+        public DbSet<DuplicatedIndex> DuplicatedIndex { get; set; }
+        public DbSet<IndexFragmentation> IndexFragmentation { get; set; }
+        public DbSet<TableUsage> TableUsage { get; set; }
+        public DbSet<UnusedIndex> UnusedIndex { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
