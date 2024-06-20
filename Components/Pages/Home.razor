@@ -6,24 +6,12 @@
 
 <h1>Hello, world!</h1>
 
-@if (devices == null)
-{
-    <p>Loading...</p>
-}
-else
-{
-    foreach(var device in devices)
-    {
-        <p>@device.DeviceId</p>
-    }
-}
-
 @code
 {
-    IEnumerable<Device>? devices;
+    //IEnumerable<Device>? devices;
 
-    protected override async Task OnInitializedAsync()
-    {
-        devices = await DbaService.GetDevicesAsync();
-    }
+    //protected override async Task OnInitializedAsync()
+    //{
+        //devices = await DbaService.GetDevicesAsync();
+    //}
 }

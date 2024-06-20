@@ -31,12 +31,12 @@ This project is Open source and will be available to public when finished
 ## Tables
 > Config
 - [X] Model
-- [ ] Service
+- [X] Service
 - [ ] Component
 - [ ] Secured
 > SqlServer
 - [X] Model
-- [ ] Service
+- [X] Service
 - [ ] Component
 - [ ] Secured
 > SqlPatch
@@ -99,7 +99,7 @@ This project is Open source and will be available to public when finished
 - [ ] Service
 - [ ] Component
 - [ ] Secured
-> Schedule
+> Schedules
 - [ ] Model
 - [ ] Service
 - [ ] Component
@@ -125,11 +125,6 @@ This project is Open source and will be available to public when finished
 - [ ] Component
 - [ ] Secured
 > MissingIndex
-- [ ] Model
-- [ ] Service
-- [ ] Component
-- [ ] Secured
-> Schedules
 - [ ] Model
 - [ ] Service
 - [ ] Component
