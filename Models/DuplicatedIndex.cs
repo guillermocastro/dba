@@ -23,5 +23,6 @@ namespace dba.Models
         public string include_columns { get; set; }
         [StringLength(128)]
         public string DBIndex { get; set; }
+        public DateTime? DataImportUtc { get; set; }
     }
 }
