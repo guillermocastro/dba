@@ -344,47 +344,38 @@ namespace dba.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime?>("DataImportUtc")
-                        .HasColumnType("datetime")
-                        .HasColumnName("DataImportUTC");
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("DbCompatibility")
-                        .HasColumnType("int")
-                        .HasColumnName("DBCompatibility");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("DbCreation")
-                        .HasColumnType("datetime")
-                        .HasColumnName("DBCreation");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("DbName")
                         .IsRequired()
                         .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)")
-                        .HasColumnName("DBName");
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("DbRecovery")
                         .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)")
-                        .HasColumnName("DBRecovery");
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<string>("DbState")
                         .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)")
-                        .HasColumnName("DBState");
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<string>("DbUse")
                         .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)")
-                        .HasColumnName("DBUse");
+                        .HasColumnType("nvarchar(10)");
 
                     b.Property<string>("DbUserAccess")
                         .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)")
-                        .HasColumnName("DBUserAccess");
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<string>("Dbcollation")
                         .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)")
-                        .HasColumnName("DBCollation");
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("InstanceId")
                         .IsRequired()
@@ -395,12 +386,10 @@ namespace dba.Migrations
                         .HasColumnType("bit");
 
                     b.Property<bool?>("IsUserDb")
-                        .HasColumnType("bit")
-                        .HasColumnName("IsUserDB");
+                        .HasColumnType("bit");
 
                     b.Property<DateTime?>("LastDbcheck")
-                        .HasColumnType("datetime")
-                        .HasColumnName("LastDBCheck");
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("LastReIndex")
                         .HasColumnType("datetime");
@@ -454,8 +443,7 @@ namespace dba.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime?>("DataImportUtc")
-                        .HasColumnType("datetime")
-                        .HasColumnName("DataImportUTC");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("DbName")
                         .HasMaxLength(128)
@@ -511,8 +499,7 @@ namespace dba.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime?>("DataImportUtc")
-                        .HasColumnType("datetime")
-                        .HasColumnName("DataImportUTC");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("DbName")
                         .IsRequired()
@@ -581,8 +568,7 @@ namespace dba.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime>("DataImportUtc")
-                        .HasColumnType("datetime")
-                        .HasColumnName("DataImportUTC");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("DbName")
                         .IsRequired()
@@ -632,12 +618,10 @@ namespace dba.Migrations
 
                     b.Property<string>("Cpu")
                         .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)")
-                        .HasColumnName("CPU");
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<DateTime?>("DataImportUtc")
-                        .HasColumnType("datetime")
-                        .HasColumnName("DataImportUTC");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Ram")
                         .HasMaxLength(64)
@@ -657,8 +641,7 @@ namespace dba.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime?>("DataImportUtc")
-                        .HasColumnType("datetime")
-                        .HasColumnName("DataImportUTC");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("DeviceId")
                         .IsRequired()
@@ -971,36 +954,32 @@ namespace dba.Migrations
 
             modelBuilder.Entity("dba.Models.SqlPatch", b =>
                 {
-                    b.Property<string>("SqlpatchId")
+                    b.Property<string>("SqlPatchId")
                         .HasMaxLength(32)
                         .HasColumnType("nvarchar(32)");
 
                     b.Property<string>("Cun")
                         .IsRequired()
                         .HasMaxLength(32)
-                        .HasColumnType("nvarchar(32)")
-                        .HasColumnName("CUN");
+                        .HasColumnType("nvarchar(32)");
 
                     b.Property<string>("PatchStatus")
                         .IsRequired()
                         .HasMaxLength(13)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(13)")
-                        .HasColumnName("CE");
+                        .HasColumnType("varchar(13)");
 
-                    b.Property<DateTime?>("SqlpatchDate")
-                        .HasColumnType("datetime")
-                        .HasColumnName("SQLPatchDate");
+                    b.Property<DateTime?>("SqlPatchDate")
+                        .HasColumnType("datetime2");
 
-                    b.Property<string>("SqlserverId")
+                    b.Property<string>("SqlServerId")
                         .IsRequired()
                         .HasMaxLength(4)
-                        .HasColumnType("nvarchar(4)")
-                        .HasColumnName("SQLServerId");
+                        .HasColumnType("nvarchar(4)");
 
-                    b.HasKey("SqlpatchId");
+                    b.HasKey("SqlPatchId");
 
-                    b.HasIndex("SqlserverId");
+                    b.HasIndex("SqlServerId");
 
                     b.ToTable("SqlPatch", "dba");
                 });
@@ -1268,7 +1247,7 @@ namespace dba.Migrations
                 {
                     b.HasOne("dba.Models.SqlServer", null)
                         .WithMany("SqlPatchs")
-                        .HasForeignKey("SqlserverId")
+                        .HasForeignKey("SqlServerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

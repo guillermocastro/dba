@@ -1,6 +1,291 @@
 ﻿@page "/Devices"
+@using dba.Models
+@using dba.Services
+@using dba.Components.Img
+@using Microsoft.AspNetCore.Authorization
+@inject IDbaService DbaService
+@* @attribute [Authorize] *@
+
 <h3>Devices</h3>
+@if (devices == null)
+{
+    <img src="~/img/loader2.gif" />
+}
+else
+{
+    @if (deviceId == "")
+    {
+        <ul class="pagination">
+            <li class="page-item"><a class="page-link" href="#">CurrentPage</a></li>
+            <li class="page-item"><a class="page-link" href="#">@CurrentPage</a></li>
+            <li class="page-item"><a class="page-link" href="#">TotalPages</a></li>
+            <li class="page-item"><a class="page-link" href="#">@TotalPages</a></li>
+            <li class="page-item"><a class="page-link" href="#">TotalRows</a></li>
+            <li class="page-item"><a class="page-link" href="#">@TotalRows</a></li>
+            @if (CurrentPage > 1)
+            {
+                <li class="page-item"><button class="btn btn-primary" @onclick="FirstPage"><IconFirst /></button></li>
+            }
+            @if (CurrentPage > 1)
+            {
+                <li class="page-item"><button class="btn btn-primary" @onclick="PreviousPage"><IconPrevious /></button></li>
+            }
+            @if (CurrentPage < TotalPages)
+            {
+                <li class="page-item"><button class="btn btn-primary" @onclick="NextPage"><IconNext /></button></li>
+            }
+            @if (CurrentPage < TotalPages)
+            {
+                <li class="page-item"><button class="btn btn-primary" @onclick="LastPage"><IconLast /></button></li>
+            }
+        </ul>
+    }
+    else
+    {
+            <ul class="pagination">
+            <li class="page-item"><button class="btn btn-primary" @onclick="Refresh"><IconInstance/></button></li>
+            <li class="page-item"><button class="btn btn-primary" @onclick="Refresh"><IconDisk /></button></li>
+        </ul>
+    }
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    <button class="btn btn-primary" @onclick="(() => AddNewDevice())"><IconAdd /></button>
+                </th>
+                <th>Device Id</th>
+                <th>RAM</th>
+                <th>CPU</th>
+                <th>Cores</th>
+                <th><button class="btn btn-primary" @onclick="Refresh"><IconRefresh /></button></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var device in devices.Where(x => x.DeviceId == deviceId || deviceId == ""))
+            {
+                <tr>
+                    <td><button class="btn btn-primary" @onclick="(() => EditDevice(device))"><IconUpdate /></button></td>
+                    <td>@device.DeviceId</td>
+                    <td>@device.Ram</td>
+                    <td>@device.Cpu</td>
+                    <td>@device.Cores</td>
+                    @if (deviceId == "")
+                    {
+                        <td><button class="btn btn-primary" @onclick="(() => SelectDevice(device))"><IconChevronRight /></button></td>
+                    }
+                    else
+                    {
+                        <td><button class="btn btn-primary" @onclick="(() => DeselectDevice())"><IconChevronLeft /></button></td>
+                    }
 
+                </tr>
+            }
+        </tbody>
+    </table>
+    @if (ShowPopup == true)
+    {
+        <div class="modal" tabindex="-1" style="display:block" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        @if (IsNewRecord)
+                        {
+                            <h3 class="modal-title">New Device</h3>
+                        }
+                        else
+                        {
+                            <h3 class="modal-title">Edit Device</h3>
+                        }
+                        <!-- Button to close the popup -->
+                        <button type="button" class="btn-close" aria-label="Close"
+                                @onclick="ClosePopup">
+                        </button>
+                    </div>
+                    <!-- Edit form for the current reccord -->
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md">
+                                <div class="form-floating">
+                                    <input class="form-control" id="DeviceId" type="text" maxlength="50" placeholder="DeviceId" @bind="device.DeviceId" />
+                                    <label for="DeviceId">DeviceId</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="col-md">
+                                <div class="form-floating">
+                                    <input class="form-control" id="Ram" type="text" maxlength="20" placeholder="RAM" @bind="device.Ram" />
+                                    <label for="Ram">RAM</label>
+                                </div>
+                            </div>
+                            <div class="col-md">
+                                <div class="form-floating">
+                                    <input class="form-control" id="Cpu" type="text" maxlength="50" placeholder="DeviceId" @bind="device.Cpu" />
+                                    <label for="Cpu">CPU</label>
+                                </div>
+                            </div>
+                    <div class="col-md">
+                        <div class="form-floating">
+                            <input class="form-control" id="Cores" type="number" maxlength="10" placeholder="Cores" @bind="device.Cores" />
+                            <label for="Cores">Cores</label>
+                        </div>
+                    </div>
+                </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-success"
+                                    @onclick="SaveDevice">
+                                <i class='oi oi-cloud-upload'></i>
+                            </button>&nbsp;
+                            <!-- Only show delete button if not a new record -->
+                            @if (IsNewRecord == false)
+                            {
+                                <!-- Button to delete the forecast -->
+                                <button class="btn btn-danger"
+                                        @onclick="DeleteDevice">
+                                    <i class='oi oi-trash'></i>
+                                </button>
+                            }
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}
 @code {
+    List<dba.Models.Device>? devices;
+    //    dba.Models.Device device = new dba.Models.Device();
+    private string deviceId { get; set; } = "";
+    private int _pageSize { get; set; }
+    bool ShowPopup = false;
+    bool IsNewRecord = false;
+    Device device = new Device();
 
+    private int CurrentPage { get; set; } = 1;
+    private int TotalPages { get; set; }
+    private int TotalRows { get; set; }
+    private bool HasNext { get; set; }
+    private bool HasPrevious { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        //selectedCompanies.Clear();
+        _pageSize = 10;
+        await Refresh();
+    }
+    private async Task Refresh()
+    {
+        devices = await DbaService.GetDevice();
+        if (deviceId == "")
+        {
+            TotalRows = devices.Count();
+            TotalPages = (int)Math.Ceiling(TotalRows / (double)_pageSize);
+            devices = devices.Skip((CurrentPage - 1) * _pageSize).Take(_pageSize).ToList();
+        }
+        if (CurrentPage > 1)
+        {
+            HasPrevious = true;
+        }
+        else
+        {
+            HasPrevious = false;
+        }
+        if (CurrentPage < TotalPages)
+        {
+            HasNext = true;
+        }
+        else
+        {
+            HasNext = false;
+        }
+        //InvokeAsync(StateHasChanged);
+    }
+    private async Task FirstPage()
+    {
+        CurrentPage = 1;
+        await Refresh();
+    }
+    private async Task LastPage()
+    {
+        CurrentPage = TotalPages;
+        await Refresh();
+    }
+    private async Task NextPage()
+    {
+        if (HasNext)
+        {
+            CurrentPage = CurrentPage + 1;
+            await Refresh();
+        }
+    }
+    private async Task PreviousPage()
+    {
+        if (HasPrevious)
+        {
+            CurrentPage = CurrentPage - 1;
+            await Refresh();
+        }
+    }
+    void AddNewDevice()
+    {
+        // Make new forecast
+        //Device device = new Device();
+        //device.DeviceId = "";
+        device.Ram = "";
+        device.Cpu = "";
+        device.Cores = 0;
+        // Open the Popup
+        ShowPopup = true;
+        IsNewRecord = true;
+    }
+    async Task SaveDevice()
+    {
+        // Close the Popup
+        ShowPopup = false;
+
+        // A new forecast will have the Id set to 0
+        if (IsNewRecord)
+        {
+            // Create new row
+            Device NewDevice = new Device();
+            NewDevice.DeviceId = device.DeviceId;
+            NewDevice.Ram = device.Ram;
+            NewDevice.Cpu = device.Cpu;
+            NewDevice.Cores = device.Cores;
+            // Save the result
+            await DbaService.CreateDevice(NewDevice);
+        }
+        else
+        {
+            // This is an update
+            await DbaService.UpdateDevice(device);
+        }
+        await Refresh();
+    }
+    void EditDevice(Device existingDevice)
+    {
+        device = existingDevice;
+        ShowPopup = true;
+        IsNewRecord = false;
+    }
+    async Task DeleteDevice()
+    {
+        ShowPopup = false;
+        await DbaService.DeleteDevice(device);
+        await Refresh();
+    }
+    void SelectDevice(Device device)
+    {
+        deviceId = device.DeviceId;
+    }
+    void DeselectDevice()
+    {
+        deviceId = "";
+    }
+    void ClosePopup()
+    {
+        // Close the Popup
+        ShowPopup = false;
+    }
 }

@@ -41,7 +41,7 @@ This project is Open source and will be available to public when finished
 - [ ] Secured
 > SqlPatch
 - [X] Model
-- [ ] Service
+- [X] Service
 - [ ] Component
 - [ ] Secured
 > Instance

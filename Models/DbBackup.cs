@@ -48,7 +48,6 @@ namespace dba.Models
         public string? LastLsn { get; set; }
         [StringLength(25)]
         public string? CheckpointLsn { get; set; }
-        [Column("DataImportUTC", TypeName = "datetime")]
         public DateTime? DataImportUtc { get; set; }
 
         public virtual Instance Instance { get; set; } = null!;

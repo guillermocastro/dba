@@ -25,7 +25,6 @@ namespace dba.Models
         public decimal? Size { get; set; }
         [StringLength(128)]
         public string? VolumeName { get; set; }
-        [Column("DataImportUTC", TypeName = "datetime")]
         public DateTime? DataImportUtc { get; set; }
 
         public virtual Device Device { get; set; } = null!;

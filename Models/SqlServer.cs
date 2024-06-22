@@ -19,11 +19,8 @@ namespace dba.Models
         public string SqlServerId { get; set; } = null!;
         [StringLength(64)]
         public string SqlServerVersion { get; set; } = null!;
-        [Column("EndActiveSupport", TypeName = "datetime")]
         private DateTime? EndActiveSupport { get; set; }
-        [Column("EndSecuritySupport", TypeName = "datetime")]
         private DateTime? EndSecuritySupport { get; set; }
-        [Column("ExtendedSecurityUpdates", TypeName = "datetime")]
         private DateTime? ExtendedSecurityUpdates { get; set; }
 
         public virtual ICollection<SqlPatch> SqlPatchs { get; set; }

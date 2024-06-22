@@ -190,15 +190,74 @@ namespace dba.Services
         }
         public async Task<string> UpdateSqlPatch(SqlPatch sqlpatch)
         {
-            throw new NotImplementedException();
+            using (var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
+            {
+                const string sqlquery = @"UPDATE [dba].[SqlPatch] SET [SqlServerId]=@SqlServerId, [Cun]=@Cun, [SqlPatchDate]=@SqlPatchDate, [PatchStatus]=@PatchStatus WHERE SqlPatchId=@SqlPatchId";
+                if (conn.State == ConnectionState.Closed)
+                    conn.Open();
+                try
+                {
+                    await conn.ExecuteAsync(sqlquery, new { sqlpatch.SqlPatchId, sqlpatch.SqlServerId, sqlpatch.Cun, sqlpatch.SqlPatchDate, sqlpatch.PatchStatus }, commandType: CommandType.Text);
+                }
+                catch (Exception ex)
+                {
+                    return ex.Message;
+                }
+                finally
+                {
+                    if (conn.State == ConnectionState.Open)
+                        conn.Close();
+                }
+            }
+            return "Row updated";
         }
         public async Task<string> DeleteSqlPatch(SqlPatch sqlpatch)
         {
-            throw new NotImplementedException();
+            using (var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                var sqlquery = @"DELETE FROM [dba].[SqlPatch] WHERE [SqlPatchId]=@SqlPatchId";
+                parameters.Add("@SqlServerId", sqlpatch.SqlPatchId);
+                if (conn.State == ConnectionState.Closed)
+                    conn.Open();
+                try
+                {
+                    await conn.ExecuteAsync(sqlquery, new { sqlpatch.SqlPatchId, sqlpatch.SqlServerId, sqlpatch.Cun, sqlpatch.SqlPatchDate, sqlpatch.PatchStatus }, commandType: CommandType.Text);
+                }
+                catch (Exception ex)
+                {
+                    return ex.Message;
+                }
+                finally
+                {
+                    if (conn.State == ConnectionState.Open)
+                        conn.Close();
+                }
+            }
+            return "Row deleted";
         }
         public async Task<string> CreateSqlPatch(SqlPatch sqlpatch)
         {
-            throw new NotImplementedException();
+            using (var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
+            {
+                const string sqlquery = @"INSERT INTO [dba].[SqlPatch] ([SqlPatchId],[SqlServerId],[Cun],[SQLPatchDate],[PatchStatus ]) VALUES (@[SqlPatchId,@SqlServerId,@Cun,@SQLPatchDate,@PatchStatus)";
+                if (conn.State == ConnectionState.Closed)
+                    conn.Open();
+                try
+                {
+                    await conn.ExecuteAsync(sqlquery, new { sqlpatch.SqlPatchId, sqlpatch.SqlServerId, sqlpatch.Cun, sqlpatch.SqlPatchDate, sqlpatch.PatchStatus }, commandType: CommandType.Text);
+                }
+                catch (Exception ex)
+                {
+                    return ex.Message;
+                }
+                finally
+                {
+                    if (conn.State == ConnectionState.Open)
+                        conn.Close();
+                }
+            }
+            return "Row Inserted";
         }
         /*Instance*/
         public async Task<List<Instance>> GetInstance()

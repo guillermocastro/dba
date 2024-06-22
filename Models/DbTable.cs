@@ -29,7 +29,6 @@ namespace dba.Models
         public decimal? IndexSize { get; set; }
         [Precision(18,2)]
         public decimal? Unused { get; set; }
-        [Column("DataImportUTC", TypeName = "datetime")]
         public DateTime DataImportUtc { get; set; }
 
         public virtual Instance Instance { get; set; } = null!;

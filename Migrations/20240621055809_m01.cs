@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace dba.Migrations
 {
     /// <inheritdoc />
@@ -54,11 +56,35 @@ namespace dba.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "BackupFile",
+                schema: "dba",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    InstanceId = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    DbName = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    BackupSet = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    Directory = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
+                    Filename = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    SizeMB = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    CreationDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    LastWriteDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Extension = table.Column<string>(type: "nvarchar(4)", maxLength: 4, nullable: false),
+                    DataImportUtc = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_BackupFile", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Config",
                 schema: "dba",
                 columns: table => new
                 {
                     VersionId = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    License = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: true),
                     DailyBackup = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
                     WeeklyBackup = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
                     MonthlyBackup = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
@@ -78,13 +104,52 @@ namespace dba.Migrations
                 {
                     DeviceId = table.Column<string>(type: "nvarchar(24)", maxLength: 24, nullable: false),
                     Ram = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: true),
-                    CPU = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true),
+                    Cpu = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true),
                     Cores = table.Column<int>(type: "int", nullable: true),
-                    DataImportUTC = table.Column<DateTime>(type: "datetime", nullable: true)
+                    DataImportUtc = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Device", x => x.DeviceId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DuplicatedIndex",
+                schema: "dba",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    InstanceId = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    Db = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    DbTable = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    Columns = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    include_columns = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DBIndex = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DuplicatedIndex", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "IndexFragmentation",
+                schema: "dba",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    InstanceId = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    Db = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    DbTable = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    DbIndex = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    Fragmentation = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    page_count = table.Column<int>(type: "int", nullable: true),
+                    DataImportUtc = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_IndexFragmentation", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -98,6 +163,47 @@ namespace dba.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_SqlServer", x => x.SqlServerId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TableUsage",
+                schema: "dba",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    InstanceId = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    DbName = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    TableName = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    UsedMB = table.Column<decimal>(type: "decimal(38,2)", precision: 38, scale: 2, nullable: false),
+                    UnusedMB = table.Column<decimal>(type: "decimal(38,2)", precision: 38, scale: 2, nullable: false),
+                    SizeMB = table.Column<decimal>(type: "decimal(38,2)", precision: 38, scale: 2, nullable: false),
+                    DataImportUtc = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TableUsage", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UnusedIndex",
+                schema: "dba",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    InstanceId = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    DbName = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    DBTable = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    DBIndex = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    user_seeks = table.Column<int>(type: "int", nullable: false),
+                    user_scans = table.Column<int>(type: "int", nullable: false),
+                    user_updates = table.Column<int>(type: "int", nullable: false),
+                    DataImportUtc = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UnusedIndex", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -220,7 +326,7 @@ namespace dba.Migrations
                     UsedSpace = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: true),
                     Size = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: true),
                     VolumeName = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true),
-                    DataImportUTC = table.Column<DateTime>(type: "datetime", nullable: true)
+                    DataImportUtc = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -256,9 +362,11 @@ namespace dba.Migrations
                     InstanceDefaultLogPath = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true),
                     BackupDirectory = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     ServerState = table.Column<string>(type: "nvarchar(6)", maxLength: 6, nullable: true),
+                    AdminState = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
                     IsSingleUser = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true),
                     Collation = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true),
                     RemoteBackup = table.Column<bool>(type: "bit", nullable: true),
+                    EncryptedBackup = table.Column<bool>(type: "bit", nullable: true),
                     Environment = table.Column<string>(type: "nvarchar(12)", maxLength: 12, nullable: true),
                     Owner = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true),
                     Listener = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true),
@@ -290,18 +398,18 @@ namespace dba.Migrations
                 schema: "dba",
                 columns: table => new
                 {
-                    SqlpatchId = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: false),
-                    SQLServerId = table.Column<string>(type: "nvarchar(4)", maxLength: 4, nullable: false),
-                    CUN = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: false),
-                    SQLPatchDate = table.Column<DateTime>(type: "datetime", nullable: true),
-                    CE = table.Column<string>(type: "varchar(13)", unicode: false, maxLength: 13, nullable: false)
+                    SqlPatchId = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: false),
+                    SqlServerId = table.Column<string>(type: "nvarchar(4)", maxLength: 4, nullable: false),
+                    Cun = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: false),
+                    SqlPatchDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    PatchStatus = table.Column<string>(type: "varchar(13)", unicode: false, maxLength: 13, nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_SqlPatch", x => x.SqlpatchId);
+                    table.PrimaryKey("PK_SqlPatch", x => x.SqlPatchId);
                     table.ForeignKey(
-                        name: "FK_SqlPatch_SqlServer_SQLServerId",
-                        column: x => x.SQLServerId,
+                        name: "FK_SqlPatch_SqlServer_SqlServerId",
+                        column: x => x.SqlServerId,
                         principalSchema: "dba",
                         principalTable: "SqlServer",
                         principalColumn: "SqlServerId",
@@ -316,21 +424,21 @@ namespace dba.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     InstanceId = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
-                    DBName = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
-                    IsUserDB = table.Column<bool>(type: "bit", nullable: true),
-                    DBState = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
-                    DBUserAccess = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
-                    DBRecovery = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
-                    DBCollation = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true),
-                    DBCompatibility = table.Column<int>(type: "int", nullable: true),
-                    DBCreation = table.Column<DateTime>(type: "datetime", nullable: true),
-                    DBUse = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: true),
+                    DbName = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    IsUserDb = table.Column<bool>(type: "bit", nullable: true),
+                    DbState = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
+                    DbUserAccess = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
+                    DbRecovery = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
+                    Dbcollation = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true),
+                    DbCompatibility = table.Column<int>(type: "int", nullable: true),
+                    DbCreation = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DbUse = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: true),
                     PersonalData = table.Column<bool>(type: "bit", nullable: true),
                     IsReplica = table.Column<bool>(type: "bit", nullable: true),
-                    LastDBCheck = table.Column<DateTime>(type: "datetime", nullable: true),
+                    LastDbcheck = table.Column<DateTime>(type: "datetime2", nullable: true),
                     LastReIndex = table.Column<DateTime>(type: "datetime", nullable: true),
                     LastShrink = table.Column<DateTime>(type: "datetime", nullable: true),
-                    DataImportUTC = table.Column<DateTime>(type: "datetime", nullable: true)
+                    DataImportUtc = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -368,7 +476,7 @@ namespace dba.Migrations
                     FirstLsn = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: true),
                     LastLsn = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: true),
                     CheckpointLsn = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: true),
-                    DataImportUTC = table.Column<DateTime>(type: "datetime", nullable: true)
+                    DataImportUtc = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -399,7 +507,7 @@ namespace dba.Migrations
                     FileSizeMb = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: true),
                     FreeSpaceMb = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: true),
                     FreeSpace = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: true),
-                    DataImportUTC = table.Column<DateTime>(type: "datetime", nullable: true)
+                    DataImportUtc = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -428,7 +536,7 @@ namespace dba.Migrations
                     Data = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: true),
                     IndexSize = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: true),
                     Unused = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: true),
-                    DataImportUTC = table.Column<DateTime>(type: "datetime", nullable: false)
+                    DataImportUtc = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -474,8 +582,21 @@ namespace dba.Migrations
             migrationBuilder.InsertData(
                 schema: "dba",
                 table: "Config",
-                columns: new[] { "VersionId", "ChangesBackup", "DailyBackup", "MonthlyBackup", "WeeklyBackup", "Yearly4Backup", "Yearly7Backup" },
-                values: new object[] { "1.0.0", "\\\\vamwin\\shares\\Changes", "\\\\vamwin\\shares\\SQL Server Backups - Daily", "\\\\vamwin\\shares\\SQL Server Backups - Monthly", "\\\\vamwin\\shares\\SQL Server Backups - Weekly", "\\\\vamwin\\shares\\SQL Server Backups - Annual - 4year", "\\\\vamwin\\shares\\SQL Server Backups - Annual - 7 year" });
+                columns: new[] { "VersionId", "ChangesBackup", "DailyBackup", "License", "MonthlyBackup", "WeeklyBackup", "Yearly4Backup", "Yearly7Backup" },
+                values: new object[] { "1.0.0", "\\\\vamwin\\shares\\Changes", "\\\\vamwin\\shares\\SQL Server Backups - Daily", "473EF1B7-0514-4038-999F-8CD547AC0050", "\\\\vamwin\\shares\\SQL Server Backups - Monthly", "\\\\vamwin\\shares\\SQL Server Backups - Weekly", "\\\\vamwin\\shares\\SQL Server Backups - Annual - 4year", "\\\\vamwin\\shares\\SQL Server Backups - Annual - 7 year" });
+
+            migrationBuilder.InsertData(
+                schema: "dba",
+                table: "SqlServer",
+                columns: new[] { "SqlServerId", "SqlServerVersion" },
+                values: new object[,]
+                {
+                    { "12.0", "Sql Server 2014" },
+                    { "13.0", "Sql Server 2016" },
+                    { "14.0", "Sql Server 2017" },
+                    { "15.0", "Sql Server 2019" },
+                    { "16.0", "Sql Server 2022" }
+                });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -559,10 +680,10 @@ namespace dba.Migrations
                 column: "InstanceId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_SqlPatch_SQLServerId",
+                name: "IX_SqlPatch_SqlServerId",
                 schema: "dba",
                 table: "SqlPatch",
-                column: "SQLServerId");
+                column: "SqlServerId");
         }
 
         /// <inheritdoc />
@@ -582,6 +703,10 @@ namespace dba.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUserTokens");
+
+            migrationBuilder.DropTable(
+                name: "BackupFile",
+                schema: "dba");
 
             migrationBuilder.DropTable(
                 name: "Config",
@@ -608,11 +733,27 @@ namespace dba.Migrations
                 schema: "dba");
 
             migrationBuilder.DropTable(
+                name: "DuplicatedIndex",
+                schema: "dba");
+
+            migrationBuilder.DropTable(
+                name: "IndexFragmentation",
+                schema: "dba");
+
+            migrationBuilder.DropTable(
                 name: "Restore",
                 schema: "dba");
 
             migrationBuilder.DropTable(
                 name: "SqlPatch",
+                schema: "dba");
+
+            migrationBuilder.DropTable(
+                name: "TableUsage",
+                schema: "dba");
+
+            migrationBuilder.DropTable(
+                name: "UnusedIndex",
                 schema: "dba");
 
             migrationBuilder.DropTable(

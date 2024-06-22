@@ -37,7 +37,6 @@ namespace dba.Models
         public decimal? FreeSpaceMb { get; set; }
         [Precision(18,2)]
         public decimal? FreeSpace { get; set; }
-        [Column("DataImportUTC", TypeName = "datetime")]
         public DateTime? DataImportUtc { get; set; }
 
 

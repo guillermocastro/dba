@@ -17,11 +17,9 @@ namespace dba.Models
         public string DeviceId { get; set; } = null!;
         [StringLength(64)]
         public string? Ram { get; set; }
-        [Column("CPU")]
         [StringLength(128)]
         public string? Cpu { get; set; }
         public int? Cores { get; set; }
-        [Column("DataImportUTC", TypeName = "datetime")]
         public DateTime? DataImportUtc { get; set; }
 
         public virtual ICollection<Instance> Instances { get; set; }

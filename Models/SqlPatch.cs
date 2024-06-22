@@ -16,16 +16,12 @@ namespace dba.Models
     {
         [Key]
         [StringLength(32)]
-        public string SqlpatchId { get; set; } = null!;
+        public string SqlPatchId { get; set; } = null!;
         [StringLength(4)]
-        [Column("SQLServerId")]
-        public string SqlserverId { get; set; } = null!;
-        [Column("CUN")]
+        public string SqlServerId { get; set; } = null!;
         [StringLength(32)]
         public string Cun { get; set; } = null!;
-        [Column("SQLPatchDate", TypeName = "datetime")]
-        public DateTime? SqlpatchDate { get; set; }
-        [Column("CE")]
+        public DateTime? SqlPatchDate { get; set; }
         [StringLength(13)]
         [Unicode(false)]
         public string PatchStatus { get; set; } = null!;
